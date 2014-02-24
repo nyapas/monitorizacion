@@ -1,4 +1,4 @@
-console.log('Iniciant mòdul agent.');
+console.log('Inicialitzant mòdul agent.');
 
 var os = require('os'),
     http = require('http');
