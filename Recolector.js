@@ -2,6 +2,7 @@ var http = require('http'),
     url = require('url'),
     nodemailer = require('nodemailer');
 
+
 var processarRegistrar = function(request, response, urlTrossejada) {
 //	var instanciaTrobada = false;
 
@@ -34,27 +35,23 @@ var processarRegistrar = function(request, response, urlTrossejada) {
 }
 
 
-function SuperaLlindar(element) {
-    return (element > 40);
-}
-
-function EnviarCorreuE = function() {
+var EnviarCorreuE = function(textTitol, textCorreu) {
     // create reusable transport method (opens pool of SMTP connections)
     var smtpTransport = nodemailer.createTransport('SMTP',{
         service: 'Gmail',
         auth: {
-            user: 'gmail.user@gmail.com',
-            pass: 'userpass'
+            user: adrCorreuE,
+            pass: contrassenya
         }
     });
 
     // setup e-mail data with unicode symbols
     var mailOptions = {
-        from: 'Fred Foo ✔ <foo@blurdybloop.com>', // sender address
-        to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
-        subject: 'Hello ✔', // Subject line
-        text: 'Hello world ✔', // plaintext body
-        html: '<b>Hello world ✔</b>' // html body
+        from: '<' + adrCorreuE + '>', // sender address
+        to: 'nyapas@orangemail.es', // list of receivers
+        subject: textTitol, // Subject line
+        text: textCorreu, // plaintext body
+        html: '<b>' + textCorreu + '</b>' // html body
     }
 
     // send mail with defined transport object
@@ -66,20 +63,25 @@ function EnviarCorreuE = function() {
         }
 
         // if you don't want to use this transport object anymore, uncomment following line
-        //smtpTransport.close(); // shut down the connection pool, no more messages
+        smtpTransport.close(); // shut down the connection pool, no more messages
     });
 
 
 }
 
+
+function SuperaLlindar(element) {
+    return (element > 40);
+}
+
 var ProcessarUsCpu = function(dades) {
     var objDades = JSON.parse(dades);
     var idAgent = objDades.id;
-    var usCpu = parseInt(objDades.usCpuPeriode * 10000) / 100;      // conversió de tant per 1 a % amb dos decimals.
+    var usCpu = objDades.usCpuPeriode;
 
     var llindarMaximCpu = 40;
     var maxRegistres = 10;
-    var maxRegsConsForaLlindar = 6;
+    var maxRegsConsForaLlindar = 2;
     var regsConsForaLlindar = false;
 
     // Si l'objecte no té com a propietat el id de l'agent, es crea.
@@ -115,7 +117,12 @@ var ProcessarUsCpu = function(dades) {
     if (usCpu > llindarMaximCpu) {
         console.log('Avís \'' + idAgent + '\' ' + usCpu);
         if (regsConsForaLlindar) {
-            console.log('MAIL \'' + idAgent + '\' Últims ' + maxRegsConsForaLlindar + ' superen ' + llindarMaximCpu + ' %.');
+            var textTitol = 'Avis d\'us de CPU agent \'' + idAgent + '\'';
+            var textAvis = 'L\'agent \'' + idAgent + '\' ' +
+                           'ha reportat els últims ' + maxRegsConsForaLlindar + ' valors d\'ús mitjà de la CPU ' +
+                           'per sobre del ' + llindarMaximCpu + '%.';
+            console.log('MAIL ' + textAvis);
+            EnviarCorreuE(textTitol, textAvis);
         }
     }
 
@@ -176,7 +183,7 @@ var procesador = function(request, response) {
 }
 
 if (process.argv.length == 4) {
-    var correuE = process.argv[2];
+    var adrCorreuE = process.argv[2];
     var contrassenya = process.argv[3];
     var InfoAgents = new Object();
     var server = http.createServer(procesador);

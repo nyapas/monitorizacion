@@ -1,4 +1,4 @@
-console.log('Inicialitzant mòdul agent.');
+console.log('Iniciant mòdul agent.');
 
 var os = require('os'),
     http = require('http');
@@ -88,7 +88,7 @@ Agente.prototype.activar = function() {
 		contador = contador + 1;
         self._agregarEstadistica();
 		var cpu = self.obtUsoCpuMedioUltPeriodo();
-		var mensaje = (cpu == undefined) ? 'No disponible.' : parseInt(cpu * 100) + '%';
+		var mensaje = (cpu == undefined) ? 'No disponible.' : cpu + '%';
         console.log('Ús mitjà de CPU dels últims ' + self.segons + ' segons: ' + mensaje);
 //		console.log(JSON.stringify(self));
 		if (contador % self.segons == 0) {
@@ -103,7 +103,7 @@ Agente.prototype._enviarResumen = function(resumen) {
     console.log('Enviant resum.');
 	var serializacionResumen = JSON.stringify(resumen);
 	var llargSerial = Buffer.byteLength(serializacionResumen);
-	var opciones = {host: '127.0.0.1',        // '192.168.30.144',
+	var opciones = {host: '127.0.0.1',
 	                port: 80,
 					path: '/estadistica',
 					method: 'POST',
@@ -136,7 +136,7 @@ Agente.prototype.obtUsoCpuMedioUltPeriodo = function() {
 
     tiempoMedioTotal = tiempoMedioTotal / this.datosEstadisticos.length;
     tiempoMedioParado = tiempoMedioParado / this.datosEstadisticos.length;
-    porcUsoMedio = (tiempoMedioTotal - tiempoMedioParado) / tiempoMedioTotal;
+    porcUsoMedio = parseInt(((tiempoMedioTotal - tiempoMedioParado) / tiempoMedioTotal) * 10000) / 100;
 
     return porcUsoMedio;
 };
